@@ -20,6 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and publish the latest blog
     steps:
+      - name: checkout
+        uses: actions/checkout@v4
       - name: install prereqs
         run: |
           sudo apt update; DEBIAN_FRONTEND=noninteractive sudo apt install -y s3cmd
