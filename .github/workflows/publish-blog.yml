@@ -28,9 +28,9 @@ jobs:
           pip3 install -r requirements.txt
       - name: build
         run: |
-          pelican $(INPUTDIR) -o $(OUTPUTDIR) -s $(PUBLISHCONF) $(PELICANOPTS)
+          pelican $INPUTDIR -o $OUTPUTDIR -s $PUBLISHCONF $PELICANOPTS
       - name: publish to s3
         run: |
           s3cmd --access_key=$(echo $AWS_ACCESS_KEY_ID) --secret_key=$(echo $AWS_SECRET_ACCESS_KEY) -s --no-encrypt --dump-config 2>&1 > ~/.s3cfg
-          s3cmd sync -v $(OUTPUTDIR)/ s3://$(S3_BUCKET) --delete-removed --guess-mime-type --no-mime-magic --no-preserve
-#          aws cloudfront create-invalidation --distribution-id $(DIST_ID) --paths "/*"
+          s3cmd sync -v $OUTPUTDIR/ s3://$S3_BUCKET --delete-removed --guess-mime-type --no-mime-magic --no-preserve
+#          aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*"
