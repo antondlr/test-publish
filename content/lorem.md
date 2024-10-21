@@ -1,3 +1,12 @@
+Title: lorem ipsum
+Date: 2024-10-21 12:00
+Category: none
+Tags: lorem, ipsum
+Slug: LoremIpsum
+Authors: anon
+Cover: imgs/cover/Siren.jpg
+Summary: Lorem Ipsum Content
+
 # Omnis meruit regi nonaque fecundo terra usque
 
 ## Rupit decepto verbis erroresque tamen
