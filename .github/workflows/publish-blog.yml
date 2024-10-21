@@ -1,0 +1,34 @@
+name: publish-blog
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  # amazon 
+  S3_BUCKET: anton-bucket-test
+  AWS_DEFAULT_REGION: ap-southeast-2
+  # pelican
+  PELICANOPTS: ""
+  INPUTDIR: "./content"
+  OUTPUTDIR: "./output"
+  PUBLISHCONF: "./publishconf.py"
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    name: Build and publish the latest blog
+    steps:
+      - name: install prereqs
+        run: |
+          sudo apt update; DEBIAN_FRONTEND=noninteractive sudo apt install -y s3cmd
+          pip3 install -r requirements.txt
+      - name: build
+        run: |
+          pelican $(INPUTDIR) -o $(OUTPUTDIR) -s $(PUBLISHCONF) $(PELICANOPTS)
+      - name: publish to s3
+        run: |
+          s3cmd --access_key=$(echo $AWS_ACCESS_KEY_ID) --secret_key=$(echo $AWS_SECRET_ACCESS_KEY) -s --no-encrypt --dump-config 2>&1 > ~/.s3cfg
+          s3cmd sync -v $(OUTPUTDIR)/ s3://$(S3_BUCKET) --delete-removed --guess-mime-type --no-mime-magic --no-preserve
+#          aws cloudfront create-invalidation --distribution-id $(DIST_ID) --paths "/*"

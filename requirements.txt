@@ -1,0 +1,4 @@
+markdown
+pelican
+pelican_render_math
+pelican_readtime
