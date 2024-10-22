@@ -9,6 +9,8 @@ env:
   # amazon 
   S3_BUCKET: anton-bucket-test
   AWS_DEFAULT_REGION: ap-southeast-2
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   # pelican
   PELICANOPTS: ""
   INPUTDIR: "./content"
@@ -30,14 +32,9 @@ jobs:
         run: |
           pelican $INPUTDIR -o $OUTPUTDIR -s $PUBLISHCONF $PELICANOPTS
       - name: generate config file
-        env: # Or as an environment variable
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          s3cmd --configure --access_key=$(echo $AWS_ACCESS_KEY_ID) --secret_key=$(echo $AWS_SECRET_ACCESS_KEY) -s --no-encrypt --dump-config 2>&1 > /tmp/.s3cfg
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+          s3cmd --configure --access_key=$(echo $AWS_ACCESS_KEY_ID) --secret_key=$(echo $AWS_SECRET_ACCESS_KEY) -s --no-encrypt --dump-config 2>&1 > ~/.s3cfg
       - name: publish to s3
         run: |
-          s3cmd -c /tmp/.s3cfg sync -v $OUTPUTDIR/ s3://$S3_BUCKET --delete-removed --guess-mime-type --no-mime-magic --no-preserve
+          s3cmd -c ~/.s3cfg sync -v $OUTPUTDIR/ s3://$S3_BUCKET --delete-removed --guess-mime-type --no-mime-magic --no-preserve
 #          aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*"
