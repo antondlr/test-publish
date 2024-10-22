@@ -35,6 +35,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           s3cmd --configure --access_key=$(echo $AWS_ACCESS_KEY_ID) --secret_key=$(echo $AWS_SECRET_ACCESS_KEY) -s --no-encrypt --dump-config 2>&1 > /tmp/.s3cfg
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
       - name: publish to s3
         run: |
           s3cmd -c /tmp/.s3cfg sync -v $OUTPUTDIR/ s3://$S3_BUCKET --delete-removed --guess-mime-type --no-mime-magic --no-preserve
